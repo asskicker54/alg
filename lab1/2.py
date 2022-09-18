@@ -42,5 +42,5 @@ for i in range(100, 1001, 100):
     print("%15.5f, %15.5f" %(pf, ps))
 
 plt.plot(plt_x, plt_first, plt_x, plt_second)
-plt.show()
+plt.savefig('./2.png')
 

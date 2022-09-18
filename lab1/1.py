@@ -25,4 +25,4 @@ for i in range(100, 1001, 100):
     print("%15.5f" %(ps))
 
 plt.plot(plt_x, plt_sort)
-plt.show()
+plt.savefig('./1.png')
