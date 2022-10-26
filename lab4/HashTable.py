@@ -4,6 +4,31 @@ class HashTable:
         self.slots = [None] * self.size
         self.data = [None] * self.size
         self.skip = 1
+        self.fill_factor = None
+
+    def culc_fill_factor(self):
+        self.fill_factor = round(len(self) / self.size, 2)
+        return self.fill_factor
+
+    def increase_thesize(self):
+        temp = [None] * self.size
+        self.slots = self.slots + temp
+        self.data = self.data + temp
+        self.size = self.size * 2
+
+    def reduce_thesize(self):
+        self.size = self.size // 2
+
+        slots_cpy = self.slots.copy()
+        data_cpy = self.data.copy()
+        temp = list(zip(slots_cpy, data_cpy))
+
+        self.slots = [None] * self.size
+        self.data = [None] * self.size
+
+        for couple in temp:
+            if couple[0] is not None:
+                self.put(couple[0], couple[1])
 
     def put(self, key, data):
         hashvalue = self.hashfunction(key, len(self.slots))
@@ -24,7 +49,10 @@ class HashTable:
                     self.slots[nextslot] = key
                     self.data[nextslot] = data
                 else:
-                    self.data[nextslot] = data  # replace
+                    self.data[nextslot] = data
+                      # replace
+        if self.culc_fill_factor() > 0.7:
+            self.increase_thesize()
 
     def hashfunction(self, key, size):
         return key % size
@@ -76,28 +104,14 @@ class HashTable:
             return True
         else: 
             return False
-            
 
-Ha = HashTable()
-
-Ha[54] = "cat"
-Ha[26] = "dog"
-Ha[93] = "lion"
-Ha[17] = "tiger"
-Ha[77] = "bird"
-Ha[31] = "cow"
-Ha[44] = "goat"
-Ha[55] = "pig"
-Ha[20] = "chicken"
-print(Ha.slots)
-print(Ha.data)
-
-print(Ha[20])
-
-print(Ha[17])
-Ha[20] = 'duck'
-print(Ha[20])
-print(Ha[99])
-print(len(Ha))
-print('dcuck' in Ha)
-print('duck' in Ha)
+    def __delitem__(self, item):
+        try:
+            idx = self.data.index(item)
+            self.data[idx] = None
+            self.slots[idx] = None
+        except ValueError as e:
+            print(f"Hash-Table has no item '{item}'")
+        
+        if self.culc_fill_factor() <= 0.2:
+            self.reduce_thesize()
