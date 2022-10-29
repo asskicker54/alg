@@ -1,3 +1,6 @@
+from sympy import nextprime, prevprime
+
+
 class HashTable:
     def __init__(self):
         self.size = 11
@@ -11,12 +14,27 @@ class HashTable:
         return self.fill_factor
 
     def increase_thesize(self):
-        temp = [None] * self.size
+        def get_prime(self):
+            prime = self.size
+            while prime <= self.size * 2:
+                prime = nextprime(prime)
+            return prime
+
+        temp = [None] * (get_prime(self) - self.size)
         self.slots = self.slots + temp
         self.data = self.data + temp
-        self.size = self.size * 2
+        self.size = get_prime(self)
 
     def reduce_thesize(self):
+        def isprime(num):
+            for n in range(2, int(num** 0.5) + 1):
+                if num % n==0:
+                    return False
+                return True
+            
+        while not isprime(self.size // 2):
+            self.size -= 1
+
         self.size = self.size // 2
 
         slots_cpy = self.slots.copy()
@@ -29,7 +47,7 @@ class HashTable:
         for couple in temp:
             if couple[0] is not None:
                 self.put(couple[0], couple[1])
-
+        
     def put(self, key, data):
         hashvalue = self.hashfunction(key, len(self.slots))
 
@@ -55,7 +73,13 @@ class HashTable:
             self.increase_thesize()
 
     def hashfunction(self, key, size):
-        return key % size
+        if isinstance(key, str):
+            res = 0
+            for i in range(len(key)):
+                res += i * ord(key[i]) // size
+            return res % size
+        else:
+            return key % size
 
     def update_skip(self):
         if self.skip != self.size:

@@ -1,4 +1,4 @@
-import HashTable
+import lab4.task1.HashTable as HashTable
 
 Ha = HashTable()
 
